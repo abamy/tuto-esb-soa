@@ -1,0 +1,27 @@
+<plugin id="org.jetel.profiler" version="3.3.2" provider-name="Javlin a.s.">
+
+	<runtime>
+		<library path="cloveretl.profiler.commercial.jar"/>
+		<library path="lib/cloveretl.profiler.launcher.commercial.jar"/>
+	</runtime>
+
+	<requires engine-version="3.3.2">
+		<import plugin-id="org.jetel.component"/>
+		<import plugin-id="com.opensys.clover.component"/>
+		<import plugin-id="org.jetel.jdbc"/>
+		<import plugin-id="org.jetel.connection"/>
+	</requires>
+	
+	<extension point-id="generalObject">
+		<parameter id="id" value="ProfilerLauncher"/>
+		<parameter id="className" value="com.cloveretl.profiler.engine.e"/>
+	</extension>
+	
+	<extension point-id="component">
+		<parameter id="className" value="com.cloveretl.profiler.engine.components.Profiler"/>
+		<parameter id="type" value="PROFILER_PROBE"/>
+	</extension>
+
+	
+	
+</plugin>

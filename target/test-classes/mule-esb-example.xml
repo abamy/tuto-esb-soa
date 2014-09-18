@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:spring="http://www.springframework.org/schema/beans"
+	version="EE-3.4.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:jaxws="http://cxf.apache.org/jaxws" xmlns:cxf="http://www.mulesoft.org/schema/mule/cxf"
+	xmlns:scripting="http://www.mulesoft.org/schema/mule/scripting" xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd 
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd
+http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mule/scripting/current/mule-scripting.xsd
+http://www.mulesoft.org/schema/mule/cxf http://www.mulesoft.org/schema/mule/cxf/current/mule-cxf.xsd">
+
+	<spring:beans>
+		<!-- log4j setting, @see http://programmingpanda.blogspot.fr/2009/07/using-different-log4j-proerties-for.html -->
+		<spring:bean id="log4jInitialization"
+			class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+			<spring:property name="targetClass" value="org.springframework.util.Log4jConfigurer" />
+			<spring:property name="targetMethod" value="initLogging" />
+			<spring:property name="arguments">
+				<spring:list>
+					<spring:value>classpath:log4j.xml</spring:value>
+				</spring:list>
+			</spring:property>
+		</spring:bean>
+	</spring:beans>
+
+	<flow name="main-flow" doc:name="main-flow">
+		<http:inbound-endpoint host="0.0.0.0" exchange-pattern="request-response" doc:name="HTTP" path="esb-example/1.0/soap"
+			port="9211" />
+		<cxf:jaxws-service serviceClass="org.example.IPurchaseOrder" doc:name="WS Interface" />
+		
+		<logger message=" flowVars : #[flowVars]" />
+
+		<set-variable variableName="operation" value="#[flowVars.cxf_operation.localPart]" doc:name="Request Setting" />
+		<logger message=" operation : #[operation]"></logger>
+
+		<!-- call the connector -->
+		<logger message=" payload : #[payload]"></logger>
+		<logger message=" queue : youplus-business-${business.version}-#[operation]-flow"></logger>
+
+		<flow-ref name="#[operation]"></flow-ref>
+
+		<scripting:component doc:name="Groovy">
+			<scripting:script engine="Groovy">
+				<scripting:text><![CDATA[
+					if (payload instanceof java.lang.Throwable) {
+						throw payload;
+					}
+					payload;
+				]]></scripting:text>
+			</scripting:script>
+		</scripting:component>
+		<!-- if there is an error throw -->
+		<logger message=" payload : #[payload]"></logger>
+	</flow>
+	
+	<flow name="OrderStatus">
+		<set-payload value="ok" />
+	</flow>
+	
+	<flow name="Order">
+		<set-payload value="ok" />
+	</flow>
+	
+</mule>

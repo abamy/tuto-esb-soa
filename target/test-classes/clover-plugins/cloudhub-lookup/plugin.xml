@@ -1,0 +1,23 @@
+<plugin
+        id="com.mulesoft.datamapper.cloudhub-lookup"
+        version="3.3.0"
+        provider-name="MuleSoft">
+
+    <runtime>
+        <library path="cloudhub-lookup.jar"/>
+        <library path="lib/jersey-client-1.12.jar"/>
+        <library path="lib/jersey-core-1.12.jar" />
+        <library path="lib/jackson-jaxrs-1.9.8.jar"/>
+        <library path="lib/jackson-core-asl-1.9.8.jar"/>
+        <library path="lib/jackson-mapper-asl-1.9.8.jar"/>
+    </runtime>
+
+
+
+    <extension point-id="lookup">
+        <parameter id="type" value="cloudhubLookup"/>
+        <parameter id="className" value="com.mulesoft.datamapper.lookup.CloudhubLookupTable"/>
+    </extension>
+
+
+</plugin>

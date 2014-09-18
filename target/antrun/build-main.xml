@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<project name="maven-antrun-" default="main"  >
+<target name="main">
+  <unzip dest="/Users/bamya/Documents/workspace/mule-esb-example/target/test-classes" src="/Users/bamya/Documents/workspace/mule-esb-example/target/test-classes/cloveretl-engine.zip"/>
+</target>
+</project>
